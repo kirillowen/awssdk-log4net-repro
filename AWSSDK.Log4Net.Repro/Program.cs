@@ -1,6 +1,8 @@
-﻿using log4net;
+﻿using Amazon;
+using log4net;
 using log4net.Config;
 using System;
+using System.Configuration;
 using System.IO;
 using Topshelf;
 
@@ -10,9 +12,20 @@ namespace AWSSDK.Log4Net.Repro
     {
         private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
+
         static void Main(string[] args)
         {
             XmlConfigurator.ConfigureAndWatch(new FileInfo("Log4Net.Config"));
+
+            // Log AWS Diagnostics
+            LoggingOptions loggingOptions = ConfigurationManager.AppSettings["AWSLoggingOption"] == "Console" 
+                ? LoggingOptions.Console 
+                : LoggingOptions.SystemDiagnostics;
+
+            Amazon.AWSConfigs.LoggingConfig.LogTo = loggingOptions;
+            Amazon.AWSConfigs.AddTraceListener("Amazon", new System.Diagnostics.ConsoleTraceListener());
+            Amazon.AWSConfigs.LoggingConfig.LogResponses = Amazon.ResponseLoggingOption.Always;
+
             try
             {
                 Log.Info("Starting...");
