@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using log4net;
 
-namespace BigChange.Automation.Service
+namespace AWSSDK.Log4Net.Repro
 {
     public class TestService
     {
